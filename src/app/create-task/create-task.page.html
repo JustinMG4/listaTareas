@@ -1,0 +1,68 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button (click)="goBack()"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ pageTitle }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="taskForm" (ngSubmit)="saveTask()">
+    <ion-list>
+      <ion-item>
+        <ion-label position="stacked">Título *</ion-label>
+        <ion-input 
+          formControlName="title" 
+          placeholder="Ingresa el título de la tarea"
+          type="text">
+        </ion-input>
+      </ion-item>
+      
+      <ion-item 
+        *ngIf="taskForm.get('title')?.invalid && taskForm.get('title')?.touched"
+        color="danger">
+        <ion-label>
+          <ion-text color="danger">
+            <small>El título es requerido (mínimo 3 caracteres)</small>
+          </ion-text>
+        </ion-label>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Descripción *</ion-label>
+        <ion-textarea 
+          formControlName="description" 
+          placeholder="Describe la tarea en detalle"
+          rows="4">
+        </ion-textarea>
+      </ion-item>
+      
+      <ion-item 
+        *ngIf="taskForm.get('description')?.invalid && taskForm.get('description')?.touched"
+        color="danger">
+        <ion-label>
+          <ion-text color="danger">
+            <small>La descripción es requerida (mínimo 5 caracteres)</small>
+          </ion-text>
+        </ion-label>
+      </ion-item>
+
+      <ion-item *ngIf="isEditing">
+        <ion-label>Estado</ion-label>
+        <ion-checkbox 
+          formControlName="completed" 
+          slot="end">
+        </ion-checkbox>
+      </ion-item>
+    </ion-list>
+
+    <ion-button 
+      expand="block" 
+      type="submit" 
+      [disabled]="!taskForm.valid"
+      class="ion-margin">
+      {{ isEditing ? 'Actualizar Tarea' : 'Crear Tarea' }}
+    </ion-button>
+  </form>
+</ion-content>

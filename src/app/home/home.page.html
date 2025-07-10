@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Blank
+      Lista de Tareas
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -9,12 +9,64 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+      <ion-title size="large">Lista de Tareas</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <ion-searchbar
+    [(ngModel)]="searchQuery"
+    (ionInput)="searchTasks()"
+    placeholder="Buscar tareas..."
+    debounce="300">
+  </ion-searchbar>
+
+  <ion-list *ngIf="!isLoading">
+    <ion-item-sliding *ngFor="let task of filteredTasks">
+      <ion-item (click)="navigateToTaskDetail(task.id)">
+        <ion-checkbox 
+          slot="start" 
+          [checked]="task.completed"
+          (ionChange)="toggleTaskStatus(task)">
+        </ion-checkbox>
+        
+        <ion-label>
+          <h2 [class.completed]="task.completed">{{ task.title }}</h2>
+          <p [class.completed]="task.completed">{{ task.description }}</p>
+          <p>
+            <ion-note color="medium">
+              {{ task.createdAt | date:'short' }}
+            </ion-note>
+          </p>
+        </ion-label>
+        
+        <ion-badge 
+          slot="end" 
+          [color]="task.completed ? 'success' : 'warning'">
+          {{ task.completed ? 'Completada' : 'Pendiente' }}
+        </ion-badge>
+      </ion-item>
+
+      <ion-item-options side="end">
+        <ion-item-option color="primary" (click)="navigateToEditTask(task.id)">
+          <ion-icon slot="icon-only" name="create"></ion-icon>
+        </ion-item-option>
+        <ion-item-option color="danger" (click)="deleteTask(task)">
+          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+
+  <ion-item *ngIf="!isLoading && filteredTasks.length === 0">
+    <ion-label>
+      <h2>No hay tareas</h2>
+      <p>Crea tu primera tarea usando el botón +</p>
+    </ion-label>
+  </ion-item>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="navigateToCreateTask()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
